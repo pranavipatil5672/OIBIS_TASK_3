@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ThermoCraft Pro | Advanced Temperature Converter & Thermal Gauge</title>
+  <meta name="description" content="A modern, high-precision temperature converter with interactive thermometer gauge, formula breakdown, unit swapping, and instant validation.">
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body data-thermal="normal">
+
+  <!-- Floating Toast Notification -->
+  <div id="toast" class="toast hidden" role="alert">
+    <div class="toast-icon"><i class="fa-solid fa-circle-check"></i></div>
+    <div class="toast-message">Copied to clipboard!</div>
+  </div>
+
+  <div class="app-background">
+    <div class="ambient-glow" id="ambient-glow"></div>
+  </div>
+
+  <div class="container main-layout">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="brand">
+        <div class="brand-icon">
+          <i class="fa-solid fa-temperature-three-quarters"></i>
+        </div>
+        <div>
+          <h1 class="brand-title">Thermo<span class="gradient-text">Craft Pro</span></h1>
+          <p class="brand-subtitle">Interactive Temperature Converter & Gauge • Oasis Infobyte Task 3</p>
+        </div>
+      </div>
+      <div class="header-tags">
+        <span class="tag-pill"><i class="fa-solid fa-atom"></i> Multi-Unit Engine</span>
+      </div>
+    </header>
+
+    <div class="converter-grid">
+      <!-- Left Column: Converter Controls -->
+      <section class="converter-card">
+        <div class="card-glow"></div>
+
+        <!-- Conversion Form -->
+        <form id="temp-form" onsubmit="return false;">
+          <!-- Temperature Input -->
+          <div class="input-block">
+            <label for="temp-input" class="input-label">
+              <span>Enter Temperature</span>
+              <span class="input-hint" id="unit-hint">Celsius (°C)</span>
+            </label>
+            <div class="input-wrapper">
+              <input 
+                type="number" 
+                id="temp-input" 
+                placeholder="e.g. 25" 
+                step="any"
+                autocomplete="off" 
+                value="25"
+                required
+              >
+              <button type="button" class="clear-input-btn" id="clear-input-btn" title="Clear input">
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+            </div>
+            <span class="validation-message" id="validation-msg"></span>
+          </div>
+
+          <!-- Unit Selection & Swap Row -->
+          <div class="units-row">
+            <div class="unit-group">
+              <label for="from-unit" class="unit-label">From</label>
+              <div class="select-wrapper">
+                <select id="from-unit">
+                  <option value="celsius" selected>Celsius (°C)</option>
+                  <option value="fahrenheit">Fahrenheit (°F)</option>
+                  <option value="kelvin">Kelvin (K)</option>
+                  <option value="rankine">Rankine (°R)</option>
+                </select>
+                <i class="fa-solid fa-chevron-down select-arrow"></i>
+              </div>
+            </div>
+
+            <button type="button" class="swap-btn" id="swap-btn" title="Swap Units" aria-label="Swap Units">
+              <i class="fa-solid fa-right-left"></i>
+            </button>
+
+            <div class="unit-group">
+              <label for="to-unit" class="unit-label">To</label>
+              <div class="select-wrapper">
+                <select id="to-unit">
+                  <option value="celsius">Celsius (°C)</option>
+                  <option value="fahrenheit" selected>Fahrenheit (°F)</option>
+                  <option value="kelvin">Kelvin (K)</option>
+                  <option value="rankine">Rankine (°R)</option>
+                </select>
+                <i class="fa-solid fa-chevron-down select-arrow"></i>
+              </div>
+            </div>
+          </div>
+
+          <!-- Precision and Settings -->
+          <div class="precision-row">
+            <label for="precision-select" class="precision-label">Precision:</label>
+            <select id="precision-select" class="precision-select">
+              <option value="0">0 decimals (integer)</option>
+              <option value="1">1 decimal (0.0)</option>
+              <option value="2" selected>2 decimals (0.00)</option>
+              <option value="3">3 decimals (0.000)</option>
+              <option value="4">4 decimals (0.0000)</option>
+            </select>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="actions-row">
+            <button type="button" class="btn btn-primary" id="convert-btn">
+              <i class="fa-solid fa-bolt"></i> Convert
+            </button>
+            <button type="button" class="btn btn-outline" id="reset-btn">
+              <i class="fa-solid fa-rotate-left"></i> Reset
+            </button>
+          </div>
+
+          <!-- Quick Presets -->
+          <div class="presets-block">
+            <span class="presets-title">Quick Presets:</span>
+            <div class="preset-buttons">
+              <button type="button" class="preset-btn" data-val="-273.15" data-unit="celsius" title="Absolute Zero">
+                ❄️ Absolute 0
+              </button>
+              <button type="button" class="preset-btn" data-val="0" data-unit="celsius" title="Freezing Point">
+                🧊 Freezing (0°C)
+              </button>
+              <button type="button" class="preset-btn" data-val="21" data-unit="celsius" title="Room Temp">
+                🏠 Room (21°C)
+              </button>
+              <button type="button" class="preset-btn" data-val="37" data-unit="celsius" title="Human Body Temp">
+                🧍 Body (37°C)
+              </button>
+              <button type="button" class="preset-btn" data-val="100" data-unit="celsius" title="Boiling Point">
+                ♨️ Boiling (100°C)
+              </button>
+            </div>
+          </div>
+        </form>
+
+        <!-- Result Display Card -->
+        <div class="result-display-box" id="result-box">
+          <div class="result-top">
+            <span class="result-badge" id="thermal-state-badge">
+              <span class="state-dot"></span>
+              <span id="state-text">Comfortable / Normal</span>
+            </span>
+            <button type="button" class="copy-btn" id="copy-btn" title="Copy Result">
+              <i class="fa-regular fa-copy"></i> Copy
+            </button>
+          </div>
+
+          <div class="result-main">
+            <div class="result-value-group">
+              <span class="result-number" id="result-value">77.00</span>
+              <span class="result-unit" id="result-unit-symbol">°F</span>
+            </div>
+            <div class="result-input-echo" id="input-echo">
+              25 °C =
+            </div>
+          </div>
+
+          <!-- Calculation Formula Breakdown -->
+          <div class="formula-card">
+            <div class="formula-header">
+              <i class="fa-solid fa-calculator"></i>
+              <span>Formula Applied:</span>
+            </div>
+            <code class="formula-text" id="formula-text">
+              (25 °C × 9/5) + 32 = 77.00 °F
+            </code>
+          </div>
+        </div>
+      </section>
+
+      <!-- Right Column: Visual Thermometer & History -->
+      <aside class="gauge-column">
+        <!-- Visual Physical Thermometer Card -->
+        <div class="thermometer-card">
+          <h3 class="card-heading"><i class="fa-solid fa-thermometer"></i> Thermal Mercury Gauge</h3>
+
+          <div class="thermometer-visual">
+            <!-- Scale Markings -->
+            <div class="scale-labels">
+              <span class="scale-mark">100°C <em>(Boiling)</em></span>
+              <span class="scale-mark">75°C</span>
+              <span class="scale-mark">50°C</span>
+              <span class="scale-mark">37°C <em>(Body)</em></span>
+              <span class="scale-mark">21°C <em>(Room)</em></span>
+              <span class="scale-mark">0°C <em>(Freezing)</em></span>
+              <span class="scale-mark">-20°C <em>(Frigid)</em></span>
+            </div>
+
+            <!-- The Tube -->
+            <div class="thermometer-apparatus">
+              <div class="stem">
+                <div class="stem-fill" id="mercury-stem" style="height: 38%;"></div>
+              </div>
+              <div class="bulb">
+                <div class="bulb-core" id="mercury-bulb"></div>
+              </div>
+            </div>
+
+            <!-- Live Status Readout -->
+            <div class="readout-box">
+              <div class="readout-icon" id="mood-icon">
+                <i class="fa-solid fa-leaf"></i>
+              </div>
+              <div class="readout-data">
+                <span class="readout-temp" id="readout-temp">25.0 °C</span>
+                <span class="readout-desc" id="readout-desc">Comfortable Room Ambience</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Conversion History Card -->
+        <div class="history-card">
+          <div class="history-header">
+            <h3 class="card-heading"><i class="fa-solid fa-clock-rotate-left"></i> Recent Conversions</h3>
+            <button type="button" class="clear-history-btn" id="clear-history-btn" title="Clear history">
+              Clear
+            </button>
+          </div>
+
+          <ul class="history-list" id="history-list">
+            <!-- Populated via script.js -->
+            <li class="history-empty">No recent conversions yet.</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <p>
+        &copy; 2026 <strong>Dhanashri Vikas Chandane</strong> | Oasis Infobyte Web Development Internship - Task 3.
+      </p>
+      <div class="footer-links">
+        <a href="../OIBSIP_TASK_1_Landing_Page/index.html"><i class="fa-solid fa-arrow-left"></i> Task 1 Landing Page</a>
+        <span>•</span>
+        <a href="../OIBSIP_TASK_2_Portfolio/index.html">Task 2 Portfolio <i class="fa-solid fa-arrow-right"></i></a>
+      </div>
+    </footer>
+  </div>
+
+  <!-- JavaScript -->
+  <script src="script.js"></script>
+</body>
+</html>
